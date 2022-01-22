@@ -47,10 +47,39 @@ link_directories(
 
 link_libraries(pthread dl)
 
-set(libs_dir "${PROJECT_SOURCE_DIR}/libs")
-include(./libs/oatpp.cmake)
-include(./libs/oatpp-websocket.cmake)
+# 按文件层次结构显示
+function(sourceGroup prefix)
+    message("prefix: ${prefix}")
+    foreach(FILE IN LISTS ARGN) 
+        get_filename_component(PARENT_DIR "${FILE}" DIRECTORY)
+        string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
+        string(REPLACE "${prefix}" "" GROUP "${GROUP}")
+        string(REPLACE "/" "\\" GROUP "${GROUP}")
 
+        if ("${FILE}" MATCHES ".*\\.cpp" AND ".*\\.cc" AND ".*\\.c")
+        set(GROUP "Source Files${GROUP}")
+        elseif("${FILE}" MATCHES ".*\\.h" AND ".*\\.hpp")
+        set(GROUP "Header Files${GROUP}")
+        endif()
+
+        source_group("${GROUP}" FILES "${FILE}")
+    endforeach()
+endfunction()
+
+
+set(libs_dir "${PROJECT_SOURCE_DIR}/libs")
+include("${libs_dir}/oatpp/CMakeLists.txt")
+include("${libs_dir}/oatpp-websocket/CMakeLists.txt")
+include("${libs_dir}/asio/CMakeLists.txt")
+include("${libs_dir}/kcp/CMakeLists.txt")
+include("${libs_dir}/lua/CMakeLists.txt")
+set(libs_list 
+oatpp
+oatpp-websocket
+asio
+kcp
+lua
+)
 
 set(HEADERS
 
@@ -58,7 +87,7 @@ set(HEADERS
 
 
 set(SOURCES
-    main.cc
+    src/main.cc
 )
 
 source_group(TREE "${CMAKE_SOURCE_DIR}" FILES ${HEADERS} ${SOURCES})
@@ -73,10 +102,7 @@ set(TARGET ${PROJECT_NAME})
 
 add_executable(${TARGET} ${SOURCES})
 
-target_link_libraries(${TARGET} PRIVATE 
-oatpp
-oatpp-websocket
-)
+target_link_libraries(${TARGET} PRIVATE ${libs_list})
 
 
 
@@ -91,7 +117,7 @@ endif()
 message(STATUS "Project will be installed to ${CMAKE_INSTALL_PREFIX}")
 
 install(
-    TARGETS ${PROJECT_NAME} oatpp oatpp-websocket
+    TARGETS ${PROJECT_NAME} ${libs_list}
     RUNTIME DESTINATION bin 
     LIBRARY DESTINATION lib
 )
