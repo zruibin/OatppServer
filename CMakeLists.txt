@@ -34,15 +34,18 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
     add_definitions("-Wno-dev")  
 endif()
 
-
+set(src_dir "${PROJECT_SOURCE_DIR}/src")
+set(libs_dir "${PROJECT_SOURCE_DIR}/libs")
 include_directories(
-  "${PROJECT_SOURCE_DIR}/libs"
+    "${src_dir}"
+    "${libs_dir}"
 )
 
 # 相当于g++命令的-L选项的作用
 link_directories(
     "/usr/local"
-    "${PROJECT_SOURCE_DIR}/libs"
+    "${src_dir}"
+    "${libs_dir}"
 )
 
 link_libraries(pthread dl)
@@ -67,7 +70,7 @@ function(sourceGroup prefix)
 endfunction()
 
 
-set(libs_dir "${PROJECT_SOURCE_DIR}/libs")
+# libs
 include("${libs_dir}/oatpp/CMakeLists.txt")
 include("${libs_dir}/oatpp-websocket/CMakeLists.txt")
 include("${libs_dir}/asio/CMakeLists.txt")
@@ -81,10 +84,20 @@ kcp
 lua
 )
 
-set(HEADERS
-
+# modules
+include("${src_dir}/log/CMakeLists.txt")
+include("${src_dir}/handler/CMakeLists.txt")
+set(modules_list 
+log_module
+handler_module
 )
 
+set(all_list ${libs_list} ${modules_list})
+message("all_list: ${all_list}")
+
+set(HEADERS
+    src/app.hpp
+)
 
 set(SOURCES
     src/main.cc
@@ -100,9 +113,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}/Bin)
 
 set(TARGET ${PROJECT_NAME})
 
-add_executable(${TARGET} ${SOURCES})
+add_executable(${TARGET} ${HEADERS} ${SOURCES})
 
-target_link_libraries(${TARGET} PRIVATE ${libs_list})
+target_link_libraries(${TARGET} PRIVATE ${all_list})
 
 
 
@@ -117,7 +130,7 @@ endif()
 message(STATUS "Project will be installed to ${CMAKE_INSTALL_PREFIX}")
 
 install(
-    TARGETS ${PROJECT_NAME} ${libs_list}
+    TARGETS ${PROJECT_NAME} ${all_list}
     RUNTIME DESTINATION bin 
     LIBRARY DESTINATION lib
 )
