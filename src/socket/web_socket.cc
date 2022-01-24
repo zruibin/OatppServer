@@ -50,7 +50,11 @@ void onMessage(server* s, websocketpp::connection_hdl hdl, message_ptr msg)
 
 static void runWebSocket(short port)
 {
+#if defined(__APPLE__)
     pthread_setname_np("WebSocket Threading.");
+#else
+    pthread_setname_np(pthread_self(), "WebSocket Threading.");
+#endif
     // Create a server endpoint
     server echo_server;
     Log(INFO) << "WebSocket run on port:" << port;

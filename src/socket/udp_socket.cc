@@ -60,7 +60,11 @@ private:
 
 static void runUDPSocket(short port)
 {
+#if defined(__APPLE__)
     pthread_setname_np("UDPSocket Threading.");
+#else
+    pthread_setname_np(pthread_self(), "UDPSocket Threading.");
+#endif
     Log(INFO) << "UDPSocket run on port:" << port;
     try {
         asio::io_context io_context;
