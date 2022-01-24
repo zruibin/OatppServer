@@ -27,6 +27,11 @@ add_library(${OATPP_THIS_MODULE_NAME}
 
 set(oatpp-websocket_name oatpp-websocket)
 
-file (GLOB_RECURSE oatpp-websocket_all_file ${libs_dir}/oatpp-websocket/*)
-add_library(${oatpp-websocket_name} ${oatpp-websocket_all_file})
-sourceGroup("/libs/oatpp-websocket" ${oatpp-websocket_all_file})
+file(GLOB_RECURSE oatpp-websocket_all_file ${libs_dir}/oatpp-websocket/*)
+
+if(USE_DEPENDS_MODEL)
+        sourceGroup("/libs" ${oatpp-websocket_all_file})
+else()
+        add_library(${oatpp-websocket_name} ${oatpp-websocket_all_file})
+        sourceGroup("/libs/oatpp-websocket" ${oatpp-websocket_all_file})
+endif()

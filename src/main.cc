@@ -6,21 +6,16 @@
  * Copyright (c) 2022年 Ruibin.Chow All rights reserved.
  */
 
-
-#include <memory>
-
-extern "C" {
-#include <kcp/ikcp.h>
-#include <lua/lua.h>
-}
-#include <asio/asio.hpp>
-#include "app.hpp"
+#include <lua/lua.hpp>
+#include "app.h"
 
 int main()
 {
     OatppServer::Application::GetInstance()
         .SetHost("localhost")
         .SetPort(8000)
+        .SetTcpPort(9806)
+        .SetUdpPort(5566)
         .Run();
     return 0;
 }

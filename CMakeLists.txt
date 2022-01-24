@@ -50,6 +50,18 @@ link_directories(
 
 link_libraries(pthread dl)
 
+function(deleteFiles)
+    foreach(FILE IN LISTS ARGN) 
+        if ("${FILE}" MATCHES ".DS_Store")
+            message("删除文件: ${FILE}")
+            file(REMOVE ${FILE})
+        endif()
+    endforeach()
+endfunction()
+file(GLOB_RECURSE delete_seerch_all_file "*")
+deleteFiles(${delete_seerch_all_file})
+
+
 # 按文件层次结构显示
 function(sourceGroup prefix)
     message("prefix: ${prefix}")
@@ -60,47 +72,84 @@ function(sourceGroup prefix)
         string(REPLACE "/" "\\" GROUP "${GROUP}")
 
         if ("${FILE}" MATCHES ".*\\.cpp" AND ".*\\.cc" AND ".*\\.c")
-        set(GROUP "Source Files${GROUP}")
+            set(GROUP "Source Files${GROUP}")
         elseif("${FILE}" MATCHES ".*\\.h" AND ".*\\.hpp")
-        set(GROUP "Header Files${GROUP}")
+            set(GROUP "Header Files${GROUP}")
         endif()
 
         source_group("${GROUP}" FILES "${FILE}")
     endforeach()
 endfunction()
 
+# 开关，是否要源码依赖方式
+set(USE_DEPENDS_MODEL TRUE)
 
 # libs
 include("${libs_dir}/oatpp/CMakeLists.txt")
-include("${libs_dir}/oatpp-websocket/CMakeLists.txt")
+# include("${libs_dir}/oatpp-websocket/CMakeLists.txt")
 include("${libs_dir}/asio/CMakeLists.txt")
+include("${libs_dir}/websocketpp/CMakeLists.txt")
 include("${libs_dir}/kcp/CMakeLists.txt")
 include("${libs_dir}/lua/CMakeLists.txt")
-set(libs_list 
-oatpp
-oatpp-websocket
-asio
-kcp
-lua
-)
-
 # modules
 include("${src_dir}/log/CMakeLists.txt")
 include("${src_dir}/handler/CMakeLists.txt")
-set(modules_list 
-log_module
-handler_module
+include("${src_dir}/socket/CMakeLists.txt")
+
+
+if(USE_DEPENDS_MODEL)
+
+set(libs_list 
 )
+
+set(modules_list 
+)
+
+set(DEPENDS_LIBS 
+    ${oatpp_all_file}
+    ${asio_all_file}
+    ${kcp_all_file}
+    ${lua_all_file}
+    ${websocketpp_all_file}
+    ${log_module_all_file}
+    ${handler_module_all_file}
+    ${socket_module_all_file}
+)
+
+else()
+
+set(libs_list 
+    oatpp
+    # oatpp-websocket
+    asio
+    kcp
+    lua
+)
+
+set(modules_list 
+    log_module
+    handler_module
+    socket_module
+)
+
+set(DEPENDS_LIBS 
+    ${websocketpp_all_file}
+)
+
+endif()
+
+
 
 set(all_list ${libs_list} ${modules_list})
 message("all_list: ${all_list}")
 
 set(HEADERS
-    src/app.hpp
+    src/app.h
 )
 
 set(SOURCES
     src/main.cc
+    src/app.cc
 )
 
 source_group(TREE "${CMAKE_SOURCE_DIR}" FILES ${HEADERS} ${SOURCES})
@@ -113,7 +162,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}/Bin)
 
 set(TARGET ${PROJECT_NAME})
 
-add_executable(${TARGET} ${HEADERS} ${SOURCES})
+add_executable(${TARGET} ${DEPENDS_LIBS} ${HEADERS} ${SOURCES})
 
 target_link_libraries(${TARGET} PRIVATE ${all_list})
 

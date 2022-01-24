@@ -297,44 +297,49 @@ add_library(oatpp
 
 set(oatpp_name oatpp)
 
-file(GLOB_RECURSE oatpp_all_file ${libs_dir}/oatpp/**/*)
-add_library(${oatpp_name} ${oatpp_all_file})
-sourceGroup("/libs/oatpp" ${oatpp_all_file})
+file(GLOB_RECURSE oatpp_all_file "${libs_dir}/oatpp/*")
 
-
-set_target_properties(oatpp PROPERTIES
-        CXX_STANDARD 11
-        CXX_EXTENSIONS OFF
-        CXX_STANDARD_REQUIRED ON
-)
-if (MSVC)
-    target_compile_options(oatpp PRIVATE /permissive-)
+if(USE_DEPENDS_MODEL)
+        sourceGroup("" ${oatpp_all_file})
+else()
+        add_library(${oatpp_name} ${oatpp_all_file})
+        sourceGroup("/libs/oatpp" ${oatpp_all_file})
 endif()
 
-set(CMAKE_THREAD_PREFER_PTHREAD ON)
+
+# set_target_properties(oatpp PROPERTIES
+#         CXX_STANDARD 11
+#         CXX_EXTENSIONS OFF
+#         CXX_STANDARD_REQUIRED ON
+# )
+# if (MSVC)
+#     target_compile_options(oatpp PRIVATE /permissive-)
+# endif()
+
+# set(CMAKE_THREAD_PREFER_PTHREAD ON)
 
 find_package(Threads REQUIRED)
 
 #######################################################################################################
 ## Link external libraries
 
-SET(OATPP_ADD_LINK_LIBS "")
+# SET(OATPP_ADD_LINK_LIBS "")
 
-if(MSVC OR MINGW)
-        SET(OATPP_ADD_LINK_LIBS wsock32 ws2_32)
-elseif(NOT APPLE AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
-        if(OATPP_LINK_ATOMIC)
-                SET(OATPP_ADD_LINK_LIBS atomic)
-        endif()
-endif()
+# if(MSVC OR MINGW)
+#         SET(OATPP_ADD_LINK_LIBS wsock32 ws2_32)
+# elseif(NOT APPLE AND NOT ${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+#         if(OATPP_LINK_ATOMIC)
+#                 SET(OATPP_ADD_LINK_LIBS atomic)
+#         endif()
+# endif()
 
-message("OATPP_ADD_LINK_LIBS=${OATPP_ADD_LINK_LIBS}")
+# message("OATPP_ADD_LINK_LIBS=${OATPP_ADD_LINK_LIBS}")
 
-target_link_libraries(oatpp PUBLIC ${CMAKE_THREAD_LIBS_INIT}
-        ${OATPP_ADD_LINK_LIBS}
-)
+# target_link_libraries(oatpp PUBLIC ${CMAKE_THREAD_LIBS_INIT}
+#         ${OATPP_ADD_LINK_LIBS}
+# )
 
-target_include_directories(oatpp PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-)
+# target_include_directories(oatpp PUBLIC
+#     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+# )
 
