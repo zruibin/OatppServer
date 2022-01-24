@@ -48,7 +48,7 @@ void onMessage(server* s, websocketpp::connection_hdl hdl, message_ptr msg)
 }
 
 
-static int runWebSocket(short port)
+static void runWebSocket(short port)
 {
     pthread_setname_np("WebSocket Threading.");
     // Create a server endpoint
