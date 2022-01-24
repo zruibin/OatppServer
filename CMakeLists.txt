@@ -12,19 +12,19 @@ message(STATUS "Build type was ${CMAKE_BUILD_TYPE}")
 
 # 检查c++编译器标志，设置c++11支持变量
 include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
+CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX14)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
 
 # 使用变量设置编译标志
 if(COMPILER_SUPPORTS_CXX14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 elseif(COMPILER_SUPPORTS_CXX0X)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 else()
-message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++14 support. Please use a different C++ compiler.")
+message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++17 support. Please use a different C++ compiler.")
 endif()
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")  #设置c++的编译选项
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")  #设置c++的编译选项
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")  #设置c的编译选项
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -161,7 +161,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}/Lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}/Bin)
 
 set(TARGET ${PROJECT_NAME})
+set(TARGET_LIB "${PROJECT_NAME}_lib")
 
+add_library(${TARGET_LIB} STATIC ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
 add_executable(${TARGET} ${DEPENDS_LIBS} ${HEADERS} ${SOURCES})
 
 target_link_libraries(${TARGET} PRIVATE ${all_list})
