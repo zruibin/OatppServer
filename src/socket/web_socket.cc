@@ -48,7 +48,7 @@ void onMessage(server* s, websocketpp::connection_hdl hdl, message_ptr msg)
 }
 
 
-int runWebSocket(int port)
+static int runWebSocket(short port)
 {
     pthread_setname_np("WebSocket Threading.");
     // Create a server endpoint
@@ -80,7 +80,7 @@ int runWebSocket(int port)
     }
 }
 
-void runAsynWebSocket(int port)
+void runAsynWebSocket(short port)
 {
     Log(INFO) << "WebSocket run detach.";
 //    std::async(runWebSocket, port);

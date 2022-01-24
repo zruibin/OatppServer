@@ -17,6 +17,7 @@
 #include "log/log_manager.h"
 #include "handler/hello_handler.h"
 #include "socket/web_socket.h"
+#include "socket/udp_socket.h"
 
 namespace OatppServer {
 
@@ -71,6 +72,7 @@ Application& Application::SetUdpPort(unsigned int port)
 void Application::Run()
 {
     socket::runAsynWebSocket(this->tcp_port_);
+    socket::runAsynUDPSocket(this->udp_port_);
     
     oatpp::base::Environment::init();
     auto connectionHandler = oatpp::web::server::HttpConnectionHandler::createShared(this->impl->router_);

@@ -8,4 +8,5 @@ file(GLOB_RECURSE websocketpp_all_file "${libs_dir}/websocketpp/*.hpp")
 sourceGroup("" ${websocketpp_all_file})
 
 add_definitions(-DASIO_STANDALONE)
+add_definitions(-DASIO_HAS_STD_SYSTEM_ERROR)
 message("warning: 为啥.hpp的无法生成单独的库？")
