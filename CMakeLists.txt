@@ -15,17 +15,22 @@ include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX14)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
 
-# 使用变量设置编译标志
-if(COMPILER_SUPPORTS_CXX14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-elseif(COMPILER_SUPPORTS_CXX0X)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+# message("List of compile features: ${CMAKE_CXX_COMPILE_FEATURES}")
+# 设置c++的编译选项
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
+if(COMPILER_SUPPORTS_CXX17)
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has C++17 support.")
+# elseif(COMPILER_SUPPORTS_CXX0X)
+#     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+#     message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has C++0x support.")
 else()
-message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++17 support. Please use a different C++ compiler.")
+    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++17 support. Please use a different C++ compiler.")
 endif()
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")  #设置c的编译选项
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")  #设置c++的编译选项
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")  #设置c的编译选项
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
     add_definitions("-Wall")
@@ -86,15 +91,17 @@ set(USE_DEPENDS_MODEL TRUE)
 
 # libs
 include("${libs_dir}/oatpp/CMakeLists.txt")
-# include("${libs_dir}/oatpp-websocket/CMakeLists.txt")
+include("${libs_dir}/nlohmann/CMakeLists.txt")
 include("${libs_dir}/asio/CMakeLists.txt")
 include("${libs_dir}/websocketpp/CMakeLists.txt")
 include("${libs_dir}/kcp/CMakeLists.txt")
 include("${libs_dir}/lua/CMakeLists.txt")
+include("${libs_dir}/sigslot/CMakeLists.txt")
 # modules
 include("${src_dir}/log/CMakeLists.txt")
 include("${src_dir}/handler/CMakeLists.txt")
 include("${src_dir}/socket/CMakeLists.txt")
+include("${src_dir}/platform/CMakeLists.txt")
 
 
 if(USE_DEPENDS_MODEL)
@@ -111,16 +118,19 @@ set(DEPENDS_LIBS
     ${kcp_all_file}
     ${lua_all_file}
     ${websocketpp_all_file}
+    ${nlohmann_json_all_file}
+    ${sigslot_all_file}
+
     ${log_module_all_file}
     ${handler_module_all_file}
     ${socket_module_all_file}
+    ${platform_module_all_file}
 )
 
 else()
 
 set(libs_list 
     oatpp
-    # oatpp-websocket
     asio
     kcp
     lua
@@ -130,10 +140,13 @@ set(modules_list
     log_module
     handler_module
     socket_module
+    platform_module
 )
 
 set(DEPENDS_LIBS 
     ${websocketpp_all_file}
+    ${nlohmann_json_all_file}
+    ${sigslot_all_file}
 )
 
 endif()
@@ -161,9 +174,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}/Lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}/Bin)
 
 set(TARGET ${PROJECT_NAME})
-set(TARGET_LIB "${PROJECT_NAME}_lib")
-
-add_library(${TARGET_LIB} STATIC ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
+# set(TARGET_LIB "${PROJECT_NAME}_lib")
+# add_library(${TARGET_LIB} STATIC ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
 add_executable(${TARGET} ${DEPENDS_LIBS} ${HEADERS} ${SOURCES})
 
 target_link_libraries(${TARGET} PRIVATE ${all_list})

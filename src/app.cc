@@ -13,6 +13,8 @@
 #include <oatpp/web/server/HttpConnectionHandler.hpp>
 #include <oatpp/network/Server.hpp>
 #include <oatpp/network/tcp/server/ConnectionProvider.hpp>
+#include <nlohmann/json.hpp>
+#include <sigslot/sigslot.h>
 
 #include "log/log_manager.h"
 #include "handler/hello_handler.h"
@@ -21,7 +23,7 @@
 
 namespace OatppServer {
 
-class ApplicationImpl
+class ApplicationImpl : public sigslot::has_slots<>
 {
 public:
     void RegisterRouteForGetMethod(const std::string& routeString,

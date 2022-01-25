@@ -7,12 +7,12 @@
  */
 
 #include "udp_socket.h"
-#include <pthread.h>
 #include <thread>
 #include <future>
 #include <string>
 #include <asio/asio.hpp>
 #include "log/log_manager.h"
+#include "platform/platform.h"
 
 namespace OatppServer {
 namespace socket {
@@ -30,9 +30,9 @@ public:
     void do_receive() {
         socket_.async_receive_from(asio::buffer(data_, max_length),
                                    sender_endpoint_,
-                                   [this](asio::system_error ec, std::size_t bytes_recvd)
+                                   [this](std::error_code ec, std::size_t bytes_recvd)
                                    {
-            if (!ec.code() && bytes_recvd > 0) {
+            if (!ec && bytes_recvd > 0) {
                 do_send(bytes_recvd);
             } else {
                 do_receive();
@@ -45,9 +45,9 @@ public:
         Log(INFO) << "UDPSocket send_to data:" << std::string(data_);
         socket_.async_send_to(
                               asio::buffer(data_, length), sender_endpoint_,
-                              [this](asio::system_error /*ec*/, std::size_t /*bytes_sent*/) {
+                              [this](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
                                   do_receive();
-                                  memset(data_,'\0',sizeof(data_));
+                                  memset(data_, '\0', sizeof(data_));
                               });
     }
     
@@ -60,11 +60,7 @@ private:
 
 static void runUDPSocket(short port)
 {
-#if defined(__APPLE__)
-    pthread_setname_np("UDPSocket Threading.");
-#else
-    pthread_setname_np(pthread_self(), "UDPSocket Threading.");
-#endif
+    platform::thread_set_name("UDPSocket Threading.");
     Log(INFO) << "UDPSocket run on port:" << port;
     try {
         asio::io_context io_context;

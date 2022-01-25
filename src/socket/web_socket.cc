@@ -7,12 +7,12 @@
  */
 
 #include "web_socket.h"
-#include <pthread.h>
 #include <thread>
 #include <future>
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
 #include "log/log_manager.h"
+#include "platform/platform.h"
 
 namespace OatppServer {
 namespace socket {
@@ -50,11 +50,7 @@ void onMessage(server* s, websocketpp::connection_hdl hdl, message_ptr msg)
 
 static void runWebSocket(short port)
 {
-#if defined(__APPLE__)
-    pthread_setname_np("WebSocket Threading.");
-#else
-    pthread_setname_np(pthread_self(), "WebSocket Threading.");
-#endif
+    platform::thread_set_name("WebSocket Threading.");
     // Create a server endpoint
     server echo_server;
     Log(INFO) << "WebSocket run on port:" << port;
