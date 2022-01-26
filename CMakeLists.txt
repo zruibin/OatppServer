@@ -41,6 +41,7 @@ endif()
 
 set(src_dir "${PROJECT_SOURCE_DIR}/src")
 set(libs_dir "${PROJECT_SOURCE_DIR}/libs")
+
 include_directories(
     "${src_dir}"
     "${libs_dir}"
@@ -52,6 +53,18 @@ link_directories(
     "${src_dir}"
     "${libs_dir}"
 )
+
+# 添加依赖
+if(EXISTS "${PROJECT_SOURCE_DIR}/deps.cmake")
+    include("deps.cmake")
+    include_directories("${DEPS_INCLUDE_DIR}")
+    link_directories("${DEPS_LIB_DIR}")
+endif()
+
+get_property(include_dirs DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+message(WARNING ">>> include_dirs=${include_dirs}")
+get_property(link_dirs DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY LINK_DIRECTORIES)
+message(WARNING ">>> link_dirs=${link_dirs}")
 
 link_libraries(pthread dl)
 
@@ -178,7 +191,7 @@ set(TARGET ${PROJECT_NAME})
 # add_library(${TARGET_LIB} STATIC ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
 add_executable(${TARGET} ${DEPENDS_LIBS} ${HEADERS} ${SOURCES})
 
-target_link_libraries(${TARGET} PRIVATE ${all_list})
+target_link_libraries(${TARGET} PRIVATE ${all_list} ${deps_list})
 
 
 

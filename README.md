@@ -1,7 +1,6 @@
 
 ## OatppServer
 
-
 ## Dependencies
 
 * [Oat++](https://github.com/oatpp)
@@ -14,3 +13,15 @@
 * [kcp](https://github.com/skywind3000/kcp)
 * [lua](http://lua.org/)
 * [sigslot](http://sigslot.sourceforge.net/)
+
+
+## Exclude Dependencies
+
+**if include dependencies using the following common steps**
+
+> python3 builddeps.py
+
+* [abseil-cpp](https://github.com/abseil/abseil-cpp)
+* [SQLiteCpp](https://github.com/SRombauts/SQLiteCpp)
+* [hiredis](https://github.com/redis/hiredis)
+* [libconfini](https://github.com/madmurphy/libconfini)

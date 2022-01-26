@@ -18,6 +18,10 @@ DerivedData
 *.hmap
 build/
 install/
+release/
+deps/
+deps.cmake
+builddeps.log
 
 #svn文件夹忽略
 .svn/

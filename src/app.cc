@@ -16,6 +16,16 @@
 #include <nlohmann/json.hpp>
 #include <sigslot/sigslot.h>
 
+/*
+#include <absl/container/btree_map.h>
+#include <SQLiteCpp/SQLiteCpp.h>
+#include <SQLiteCpp/VariadicBind.h>
+#include <hiredis/hiredis.h>
+extern "C" {
+#include <confini.h>
+}
+*/
+
 #include "log/log_manager.h"
 #include "handler/hello_handler.h"
 #include "socket/web_socket.h"
@@ -98,6 +108,18 @@ void Application::Initialize()
     std::shared_ptr<HelloHandler> helloHandler = std::make_shared<HelloHandler>();
     this->impl->RegisterRouteForGetMethod("/", helloHandler);
     this->impl->RegisterRouteForGetMethod("/hello", helloHandler);
+    
+    /*
+    absl::btree_map<int, std::string> map2 = {{1, "huey"}, {2, "dewey"}, {3, "louie"},};
+    for (auto &kv : map2) {
+        Log(VERBOSE) << kv.first << ":" << kv.second;
+    }
+    Log(VERBOSE) << "SQlite3 version " << SQLite::VERSION << " (" << SQLite::getLibVersion() << ")";
+    Log(VERBOSE) << "SQliteC++ version " << SQLITECPP_VERSION;
+    Log(VERBOSE) << "hiredis version " << HIREDIS_MAJOR << "." << HIREDIS_MINOR << "." << HIREDIS_PATCH;
+    redisContext *c = nullptr;
+    redisReply *reply = nullptr;
+    */
 }
 
 
