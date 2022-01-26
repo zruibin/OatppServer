@@ -67,6 +67,7 @@ def buildDeps(dirStr, gitUrl, cloneList, cmdList, genBuilding=True, preCmdList=[
             shutil.rmtree(buildDir)
         os.makedirs(buildDir)
         os.chdir(buildDir)
+    log("当前编译路径：" + os.getcwd())
     if len(preCmdList) > 0:
         operatorCMD(preCmdList, False)    
     operatorCMD(cmdList, False)
@@ -152,7 +153,7 @@ if __name__ == '__main__':
     buildDepsByList(abseilList)
     buildDepsByList(hiredisList)
     buildDepsByList(sqliteCppList)
-    buildDepsByList(libconfiniList, genBuilding=False)
+    buildDepsByList(libconfiniList, genBuilding=False, preCmdList=["./bootstrap"])
 
     genDepsCmakeList()
     end = datetime.datetime.now()
