@@ -143,6 +143,7 @@ include("${src_dir}/log/CMakeLists.txt")
 include("${src_dir}/handler/CMakeLists.txt")
 include("${src_dir}/socket/CMakeLists.txt")
 include("${src_dir}/platform/CMakeLists.txt")
+include("${src_dir}/util/CMakeLists.txt")
 
 
 if(USE_DEPENDS_MODEL)
@@ -166,6 +167,7 @@ set(DEPENDS_LIBS
     ${handler_module_all_file}
     ${socket_module_all_file}
     ${platform_module_all_file}
+    ${util_module_all_file}
 )
 
 else()
@@ -182,6 +184,7 @@ set(modules_list
     handler_module
     socket_module
     platform_module
+    util_module
 )
 
 set(DEPENDS_LIBS 
@@ -213,6 +216,10 @@ set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR}/Lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}/Lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}/Bin)
+message(STATUS "OUTPUT_DIR: ${OUTPUT_DIR}")
+message(STATUS "ARCHIVE_OUTPUT_DIRECTORY: ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
+message(STATUS "LIBRARY_OUTPUT_DIRECTORY: ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+message(STATUS "RUNTIME_OUTPUT_DIRECTORY: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 set(TARGET ${PROJECT_NAME})
 # set(TARGET_LIB "${PROJECT_NAME}_lib")
@@ -237,5 +244,12 @@ install(
     TARGETS ${PROJECT_NAME} ${all_list}
     RUNTIME DESTINATION bin 
     LIBRARY DESTINATION lib
+)
+
+#-------------------------------------------------------------------------------
+add_custom_target(run
+    COMMAND ./${TARGET}
+    WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    COMMENT "Intermediate Run target: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
 )
 

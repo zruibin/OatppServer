@@ -16,6 +16,7 @@ xcshareddata
 DerivedData
 .idea/
 *.hmap
+.vscode/
 build/
 install/
 release/

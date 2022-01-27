@@ -11,7 +11,10 @@
 #include <chrono>
 #include <iomanip>
 #include <sstream>
+#include <ctime>
 #include "platform/platform.h"
+#include "util/util.h"
+#include "log_file_manager.h"
 
 namespace OatppServer {
 namespace log {
@@ -30,25 +33,11 @@ static const char* loggingSeverityCover(LoggingSeverity severity)
     return severityList[severity];
 }
 
-static const std::string loggingNow()
-{
-    auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-//    std::stringstream ss;
-//    ss << std::put_time(std::localtime(&now), "%Y-%m-%d %H.%M.%S");
-//    return std::move(ss.str());
-    struct tm* ptm = localtime(&now);
-    char date[60] = {0};
-    sprintf(date, "%d-%02d-%02d %02d:%02d:%02d",
-            (int)ptm->tm_year + 1900,(int)ptm->tm_mon + 1,(int)ptm->tm_mday,
-            (int)ptm->tm_hour,(int)ptm->tm_min,(int)ptm->tm_sec);
-    return std::string(date);
-}
-
 LogMessage::LogMessage(const char* file, int line, LoggingSeverity severity)
         : stringBuffer_(new std::string)
 {
     std::string fileStr(file);
-    stringBuffer_->append(loggingNow());
+    stringBuffer_->append(util::get_current_time_string());
     stringBuffer_->append(" [");
     stringBuffer_->append(fileStr.substr(fileStr.find_last_of("/")+1));
     stringBuffer_->append(":");
@@ -65,6 +54,7 @@ LogMessage::~LogMessage()
 {
     stringBuffer_->append("\n");
     std::cout << stringBuffer_->c_str();
+    LogFileManager::GetInstance().Write(stringBuffer_->c_str());
     delete stringBuffer_;
 }
 
