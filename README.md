@@ -24,4 +24,5 @@
 * [abseil-cpp](https://github.com/abseil/abseil-cpp)
 * [SQLiteCpp](https://github.com/SRombauts/SQLiteCpp)
 * [hiredis](https://github.com/redis/hiredis)
-* [libconfini](https://github.com/madmurphy/libconfini)
+
+    

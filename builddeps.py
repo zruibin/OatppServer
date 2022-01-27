@@ -129,6 +129,8 @@ if __name__ == '__main__':
             "-DABSL_BUILD_TESTING=ON -DABSL_USE_GOOGLETEST_HEAD=OFF -DCMAKE_CXX_STANDARD=11", 
             "-D", "CMAKE_INSTALL_PREFIX="+releaseDir, ".."]
     ]
+    buildDepsByList(abseilList)
+
     hiredisList = [
         "hiredis",
         "https://github.com/redis/hiredis",
@@ -136,6 +138,8 @@ if __name__ == '__main__':
         ["cmake", "-D CMAKE_BUILD_TYPE=RELEASE", 
             "-D", "CMAKE_INSTALL_PREFIX="+releaseDir, ".."]
     ]
+    buildDepsByList(hiredisList)
+
     sqliteCppList = [
         "SQLiteCpp",
         "https://github.com/SRombauts/SQLiteCpp",
@@ -143,17 +147,15 @@ if __name__ == '__main__':
         ["cmake", "-D CMAKE_BUILD_TYPE=RELEASE", 
             "-D", "CMAKE_INSTALL_PREFIX="+releaseDir, ".."]
     ]
-    libconfiniList = [
-        "libconfini",
-        "https://github.com/madmurphy/libconfini",
-        ["git", "clone", "-b", "1.16.3", "--depth=1", "https://github.com/madmurphy/libconfini", "libconfini"],
-        ["./configure", "--prefix="+releaseDir]
-    ]
-
-    buildDepsByList(abseilList)
-    buildDepsByList(hiredisList)
     buildDepsByList(sqliteCppList)
-    buildDepsByList(libconfiniList, genBuilding=False, preCmdList=["./bootstrap"])
+    
+    # libconfiniList = [
+    #     "libconfini",
+    #     "https://github.com/madmurphy/libconfini",
+    #     ["git", "clone", "-b", "1.16.3", "--depth=1", "https://github.com/madmurphy/libconfini", "libconfini"],
+    #     ["./configure", "--prefix="+releaseDir]
+    # ]
+    # buildDepsByList(libconfiniList, genBuilding=False, preCmdList=["./bootstrap"])
 
     genDepsCmakeList()
     end = datetime.datetime.now()

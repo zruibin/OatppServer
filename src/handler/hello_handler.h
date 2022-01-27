@@ -9,13 +9,13 @@
 #define HELLO_HANDLER_H
 
 #include <oatpp/web/server/HttpConnectionHandler.hpp>
-#include "log/log_manager.h"
+#include "log/logging.h"
 
 class HelloHandler : public oatpp::web::server::HttpRequestHandler
 {
 public:
     std::shared_ptr<OutgoingResponse> handle(const std::shared_ptr<IncomingRequest>& request) override {
-//        Log(INFO) << &request;
+        Log(INFO) << &request;
         return ResponseFactory::createResponse(Status::CODE_200, "Hello World! From Oatpp -> Ruibin.Chow");
     }
 };

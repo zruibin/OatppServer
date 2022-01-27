@@ -26,7 +26,7 @@ extern "C" {
 }
 */
 
-#include "log/log_manager.h"
+#include "log/logging.h"
 #include "handler/hello_handler.h"
 #include "socket/web_socket.h"
 #include "socket/udp_socket.h"

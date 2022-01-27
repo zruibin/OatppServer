@@ -11,7 +11,7 @@
 #include <future>
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
-#include "log/log_manager.h"
+#include "log/logging.h"
 #include "platform/platform.h"
 
 namespace OatppServer {

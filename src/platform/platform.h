@@ -11,8 +11,8 @@
 namespace OatppServer {
 namespace platform {
 
-
 int thread_set_name(const char*);
+unsigned short thread_get_current_id(void);
 
 
 }

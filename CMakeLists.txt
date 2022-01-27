@@ -33,11 +33,39 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")  #设置c的编译选项
 
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
+    message(WARNING "Debug Model.")
     add_definitions("-Wall")
     add_definitions("-fPIC")
     add_definitions("-Wl,-lm")
     add_definitions("-Wno-dev")  
+    list(APPEND flags "-fPIC" "-Wall")
+    if(NOT WIN32)
+        list(APPEND flags "-Wextra" "-Wpedantic")
+    endif()
 endif()
+
+
+message(STATUS "Is the C++ compiler loaded? ${CMAKE_CXX_COMPILER_LOADED}")
+if(CMAKE_CXX_COMPILER_LOADED)
+    message(STATUS "The C++ compiler ID is: ${CMAKE_CXX_COMPILER_ID}")
+    # message(STATUS "Is the C++ from GNU? ${CMAKE_COMPILER_IS_GNUCXX}")
+    message(STATUS "The C++ compiler version is: ${CMAKE_CXX_COMPILER_VERSION}")
+endif()
+message(STATUS "Is the C compiler loaded? ${CMAKE_C_COMPILER_LOADED}")
+if(CMAKE_C_COMPILER_LOADED)
+    message(STATUS "The C compiler ID is: ${CMAKE_C_COMPILER_ID}")
+    # message(STATUS "Is the C from GNU? ${CMAKE_COMPILER_IS_GNUCC}")
+    message(STATUS "The C compiler version is: ${CMAKE_C_COMPILER_VERSION}")
+endif()
+message(STATUS "C flags, Debug configuration: ${CMAKE_C_FLAGS_DEBUG}")
+message(STATUS "C flags, Release configuration: ${CMAKE_C_FLAGS_RELEASE}")
+message(STATUS "C flags, Release configuration with Debug info: ${CMAKE_C_FLAGS_RELWITHDEBINFO}")
+message(STATUS "C flags, minimal Release configuration: ${CMAKE_C_FLAGS_MINSIZEREL}")
+message(STATUS "C++ flags, Debug configuration: ${CMAKE_CXX_FLAGS_DEBUG}")
+message(STATUS "C++ flags, Release configuration: ${CMAKE_CXX_FLAGS_RELEASE}")
+message(STATUS "C++ flags, Release configuration with Debug info: ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+message(STATUS "C++ flags, minimal Release configuration: ${CMAKE_CXX_FLAGS_MINSIZEREL}")
+
 
 set(src_dir "${PROJECT_SOURCE_DIR}/src")
 set(libs_dir "${PROJECT_SOURCE_DIR}/libs")
@@ -62,9 +90,9 @@ if(EXISTS "${PROJECT_SOURCE_DIR}/deps.cmake")
 endif()
 
 get_property(include_dirs DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-message(WARNING ">>> include_dirs=${include_dirs}")
+message(WARNING ">>>include_dirs=${include_dirs}")
 get_property(link_dirs DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY LINK_DIRECTORIES)
-message(WARNING ">>> link_dirs=${link_dirs}")
+message(WARNING ">>>link_dirs=${link_dirs}")
 
 link_libraries(pthread dl)
 
@@ -190,7 +218,7 @@ set(TARGET ${PROJECT_NAME})
 # set(TARGET_LIB "${PROJECT_NAME}_lib")
 # add_library(${TARGET_LIB} STATIC ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
 add_executable(${TARGET} ${DEPENDS_LIBS} ${HEADERS} ${SOURCES})
-
+target_compile_options(${TARGET} PRIVATE ${flags})
 target_link_libraries(${TARGET} PRIVATE ${all_list} ${deps_list})
 
 

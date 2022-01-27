@@ -8,6 +8,8 @@
 
 #include "platform.h"
 #include <pthread.h>
+#include <sstream>
+#include <thread>
 
 namespace OatppServer {
 namespace platform {
@@ -19,6 +21,14 @@ int thread_set_name(const char* name)
 #else
     return pthread_setname_np(pthread_self(), name);
 #endif
+}
+
+unsigned short thread_get_current_id(void)
+{
+    std::ostringstream oss;
+    oss << std::hash<std::thread::id>()(std::this_thread::get_id());
+    unsigned short tid = std::stoull(oss.str());
+    return tid;
 }
 
 }

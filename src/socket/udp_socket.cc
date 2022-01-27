@@ -11,7 +11,7 @@
 #include <future>
 #include <string>
 #include <asio/asio.hpp>
-#include "log/log_manager.h"
+#include "log/logging.h"
 #include "platform/platform.h"
 
 namespace OatppServer {
