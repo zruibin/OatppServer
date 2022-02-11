@@ -97,6 +97,9 @@ set(DEPS_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/release/lib")
 
 message("Deps Include Directory: ${DEPS_INCLUDE_DIR}")
 message("Deps Lib Directory: ${DEPS_LIB_DIR}")
+
+include_directories("${DEPS_INCLUDE_DIR}")
+link_directories("${DEPS_LIB_DIR}")
 """
     log("Deps CmakeList content: " + depsContent)
     with open(depsCamke, "w") as fileHandler:

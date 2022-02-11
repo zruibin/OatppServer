@@ -9,6 +9,9 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 message(STATUS "Build type was ${CMAKE_BUILD_TYPE}")
 
+# 生成compile_commands.json,用于在VSCode等编辑器/IDE中给C/C++代码做函数定义跳转支持
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 
 # 检查c++编译器标志，设置c++11支持变量
 include(CheckCXXCompilerFlag)
@@ -85,8 +88,6 @@ link_directories(
 # 添加依赖
 if(EXISTS "${PROJECT_SOURCE_DIR}/deps.cmake")
     include("deps.cmake")
-    include_directories("${DEPS_INCLUDE_DIR}")
-    link_directories("${DEPS_LIB_DIR}")
 endif()
 
 get_property(include_dirs DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
