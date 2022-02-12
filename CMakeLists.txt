@@ -223,9 +223,14 @@ message(STATUS "LIBRARY_OUTPUT_DIRECTORY: ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 message(STATUS "RUNTIME_OUTPUT_DIRECTORY: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 set(TARGET ${PROJECT_NAME})
-# set(TARGET_LIB "${PROJECT_NAME}_lib")
-# add_library(${TARGET_LIB} STATIC ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
+
+set(TARGET_STATIC_LIB "${PROJECT_NAME}_static")
+add_library(${TARGET_STATIC_LIB} STATIC ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
+set(TARGET_SHARED_LIB "${PROJECT_NAME}_shared")
+add_library(${TARGET_SHARED_LIB} SHARED ${DEPENDS_LIBS} ${HEADERS} ${SOURCES} ${all_list})
+
 add_executable(${TARGET} ${DEPENDS_LIBS} ${HEADERS} ${SOURCES})
+
 target_compile_options(${TARGET} PRIVATE ${flags})
 target_link_libraries(${TARGET} PRIVATE ${all_list} ${deps_list})
 
@@ -242,10 +247,14 @@ endif()
 message(STATUS "Project will be installed to ${CMAKE_INSTALL_PREFIX}")
 
 install(
-    TARGETS ${PROJECT_NAME} ${all_list}
+    TARGETS ${TARGET} ${TARGET_STATIC_LIB} ${TARGET_SHARED_LIB}
     RUNTIME DESTINATION bin 
     LIBRARY DESTINATION lib
 )
+set(output_head_files
+    "${src_dir}/app.h"
+)
+install(FILES ${output_head_files} DESTINATION include)
 
 #-------------------------------------------------------------------------------
 add_custom_target(run
