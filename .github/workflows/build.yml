@@ -58,6 +58,6 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: OatppServer.${{matrix.os}}.zip
-          path: OatppServer.${{matrix.os}}.zip
+          name: OatppServer.${{matrix.os}}.tar.gz
+          path: OatppServer.${{matrix.os}}.tar.gz
       
