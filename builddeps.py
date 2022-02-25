@@ -16,10 +16,10 @@ import subprocess, shutil
 import datetime
 
 homeDir = ""
-releaseDir = ""
-depsDir = ""
-depsDirName = "deps"
-releaseDirName = "release"
+sourceDir = ""
+outputDir = ""
+sourceDirName = "depsSource"
+outputDirName = "deps"
 slash = "/"
 if(platform.system()=='Windows'):
     slash = "\\"
@@ -58,7 +58,7 @@ def buildDeps(dirStr, gitUrl, cloneList, cmdList, genBuilding=True, preCmdList=[
         return
     log("-"*80)
     log("Start Building Deps: " + dirStr)
-    os.chdir(depsDir)
+    os.chdir(sourceDir) #进入到源代码存放的目录
     operatorCMD(cloneList)
     os.chdir(dirStr)
     if genBuilding:
@@ -92,8 +92,8 @@ message("This is deps.cmake")
 
 set(deps_list SQLiteCpp sqlite3 pthread dl)
 
-set(DEPS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/release/include")
-set(DEPS_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/release/lib")
+set(DEPS_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/"""+outputDirName+"""/include")
+set(DEPS_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/"""+outputDirName+"""/lib")
 
 message("Deps Include Directory: ${DEPS_INCLUDE_DIR}")
 message("Deps Lib Directory: ${DEPS_LIB_DIR}")
@@ -104,7 +104,6 @@ link_directories("${DEPS_LIB_DIR}")
     log("Deps CmakeList content: " + depsContent)
     with open(depsCamke, "w") as fileHandler:
         fileHandler.write(depsContent)
-
     pass
 
 
@@ -112,17 +111,17 @@ if __name__ == '__main__':
     begin = datetime.datetime.now()
     log("更新时间：" + str(begin))
 
-    if not os.path.exists(depsDirName):
-        os.makedirs(depsDirName)
-    if not os.path.exists(releaseDirName):
-        os.makedirs(releaseDirName)
+    if not os.path.exists(sourceDirName):
+        os.makedirs(sourceDirName)
+    if not os.path.exists(outputDirName):
+        os.makedirs(outputDirName)
     
     homeDir = sys.path[0]
     log("Home Directory: " + homeDir)
-    depsDir = homeDir + slash + depsDirName
-    log("Deps Directory: " + depsDir)
-    releaseDir = homeDir + slash + releaseDirName
-    log("Install Directory: " + releaseDir)
+    sourceDir = homeDir + slash + sourceDirName
+    log("Deps Directory: " + sourceDir)
+    outputDir = homeDir + slash + outputDirName
+    log("Install Directory: " + outputDir)
 
     abseilList = [
         "abseil",
@@ -130,7 +129,7 @@ if __name__ == '__main__':
         ["git", "clone", "-b", "20211102.0", "--depth=1", "https://github.com/abseil/abseil-cpp", "abseil"],
         ["cmake", "-D CMAKE_BUILD_TYPE=RELEASE", 
             "-DABSL_BUILD_TESTING=ON -DABSL_USE_GOOGLETEST_HEAD=OFF -DCMAKE_CXX_STANDARD=11", 
-            "-D", "CMAKE_INSTALL_PREFIX="+releaseDir, ".."]
+            "-D", "CMAKE_INSTALL_PREFIX="+outputDir, ".."]
     ]
     buildDepsByList(abseilList)
 
@@ -139,7 +138,7 @@ if __name__ == '__main__':
         "https://github.com/redis/hiredis",
         ["git", "clone", "-b", "v1.0.2", "--depth=1", "https://github.com/redis/hiredis", "hiredis"],
         ["cmake", "-D CMAKE_BUILD_TYPE=RELEASE", 
-            "-D", "CMAKE_INSTALL_PREFIX="+releaseDir, ".."]
+            "-D", "CMAKE_INSTALL_PREFIX="+outputDir, ".."]
     ]
     buildDepsByList(hiredisList)
 
@@ -148,7 +147,7 @@ if __name__ == '__main__':
         "https://github.com/SRombauts/SQLiteCpp",
         ["git", "clone", "-b", "3.1.1", "--depth=1", "https://github.com/SRombauts/SQLiteCpp", "SQLiteCpp"],
         ["cmake", "-D CMAKE_BUILD_TYPE=RELEASE", 
-            "-D", "CMAKE_INSTALL_PREFIX="+releaseDir, ".."]
+            "-D", "CMAKE_INSTALL_PREFIX="+outputDir, ".."]
     ]
     buildDepsByList(sqliteCppList)
     
@@ -156,7 +155,7 @@ if __name__ == '__main__':
     #     "libconfini",
     #     "https://github.com/madmurphy/libconfini",
     #     ["git", "clone", "-b", "1.16.3", "--depth=1", "https://github.com/madmurphy/libconfini", "libconfini"],
-    #     ["./configure", "--prefix="+releaseDir]
+    #     ["./configure", "--prefix="+outputDir]
     # ]
     # buildDepsByList(libconfiniList, genBuilding=False, preCmdList=["./bootstrap"])
 

@@ -20,6 +20,7 @@ DerivedData
 build/
 install/
 release/
+depsSource/
 deps/
 deps.cmake
 builddeps.log
