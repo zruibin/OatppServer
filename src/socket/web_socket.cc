@@ -22,6 +22,7 @@ typedef websocketpp::server<websocketpp::config::asio> server;
 using websocketpp::lib::placeholders::_1;
 using websocketpp::lib::placeholders::_2;
 using websocketpp::lib::bind;
+using ErrorCode = websocketpp::lib::error_code;
 
 // pull out the type of messages sent by our config
 typedef server::message_ptr message_ptr;
@@ -47,6 +48,17 @@ void onMessage(server* s, websocketpp::connection_hdl hdl, message_ptr msg)
     }
 }
 
+void onOpen(server* s, websocketpp::connection_hdl hdl) {
+    server::connection_ptr con = s->get_con_from_hdl(hdl);
+    std::string client_ip_port = con->get_remote_endpoint();
+    Log(INFO) << "onOpen clinet port: " << client_ip_port;
+}
+
+void onClose(server* s, websocketpp::connection_hdl hdl) {
+    server::connection_ptr con = s->get_con_from_hdl(hdl);
+    std::string client_ip_port = con->get_remote_endpoint();
+    Log(INFO) << "onClose clinet port: " << client_ip_port;
+}
 
 static void runWebSocket(short port)
 {
@@ -64,6 +76,9 @@ static void runWebSocket(short port)
 
         // Register our message handler
         echo_server.set_message_handler(bind(&onMessage, &echo_server, _1, _2));
+        echo_server.set_open_handler(bind(&onOpen, &echo_server, _1));
+        echo_server.set_close_handler(bind(&onClose, &echo_server, _1));
+        
 
         // Listen on port 9002
         echo_server.listen(port);
