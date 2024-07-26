@@ -10,6 +10,7 @@
 #include <thread>
 #include <future>
 #include <string>
+#include <stdio.h>
 #include <asio/asio.hpp>
 #include "log/logging.h"
 #include "platform/platform.h"
@@ -43,6 +44,14 @@ public:
     
     void do_send(std::size_t length) {
         Log(INFO) << "UDPSocket send_to data:" << std::string(data_);
+        
+        if (strncmp(data_, "ip", 2) == 0) {
+            std::string address = sender_endpoint_.address().to_string();
+            Log(INFO) << "Remote Address: " << address;
+            strcpy(data_, address.c_str());
+            length = address.length();
+        }
+        
         socket_.async_send_to(
                               asio::buffer(data_, length), sender_endpoint_,
                               [this](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
@@ -85,6 +94,8 @@ void runAsynUDPSocket(short port)
 
 
 /*
+ 测试命令： nc -u  127.0.0.1 5566
+ 
  python测试脚本：
 
 # -*- coding: utf-8 -*-
@@ -97,18 +108,18 @@ client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 PORT = 5566
 
 while True:
-      start = time.time()  #获取当前时间
-      print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(start)))  #以指定格式显示当前时间
-      msg=raw_input("请输入要发送的内容：")
-      server_address = ("localhost", PORT)  # 接收方 服务器的ip地址和端口号
-      client_socket.sendto(msg, server_address) #将msg内容发送给指定接收方
-      now = time.time() #获取当前时间
-      run_time = now-start #计算时间差，即运行时间
-      print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(now)))
-      print("run_time: %d seconds\n" %run_time)
+    start = time.time()  #获取当前时间
+    print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(start)))  #以指定格式显示当前时间
+    msg=input("请输入要发送的内容：")
+    server_address = ("localhost", PORT)  # 接收方 服务器的ip地址和端口号
+    client_socket.sendto(msg.encode(), server_address) #将msg内容发送给指定接收方
+    now = time.time() #获取当前时间
+    run_time = now-start #计算时间差，即运行时间
+    print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(now)))
+    print("run_time: %d seconds\n" %run_time)
 
-      receive_data, client = client_socket.recvfrom(1024)
-      print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(now))) #以指定格式显示时间
-      print("接收到来自服务端%s,发送：%s\n" % (client, receive_data))  #打印接收的内容
+    receive_data, client = client_socket.recvfrom(1024)
+    print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(now))) #以指定格式显示时间
+    print("接收到来自服务端%s,发送：%s\n" % (client, receive_data.decode()))  #打印接收的内容
  
 */
