@@ -18,6 +18,17 @@
 namespace OatppServer {
 namespace socket {
 
+void removeSpacesAndNewlines(char* str) {
+    char* writePtr = str;
+    while (*str) {
+        if (*str != ' ' && *str != '\n' && *str != '\t') {
+            *writePtr++ = *str;
+        }
+        str++;
+    }
+    *writePtr = '\0';
+}
+
 using asio::ip::udp;
 
 class UDPSocket
@@ -33,18 +44,17 @@ public:
                                    sender_endpoint_,
                                    [this](std::error_code ec, std::size_t bytes_recvd)
                                    {
-            if (!ec && bytes_recvd > 0) {
+            Log(INFO) << "UDPSocket Receive data: " << std::string(data_);
+            removeSpacesAndNewlines(data_);
+            if (!ec && bytes_recvd > 0 && strlen(data_) > 0) {
                 do_send(bytes_recvd);
             } else {
                 do_receive();
             }
         });
-        Log(INFO) << "UDPSocket receive_from data:" << std::string(data_);
     }
     
     void do_send(std::size_t length) {
-        Log(INFO) << "UDPSocket send_to data:" << std::string(data_);
-        
         if (strncmp(data_, "ip", 2) == 0) {
             std::string address = sender_endpoint_.address().to_string();
             Log(INFO) << "Remote Address: " << address
@@ -52,7 +62,7 @@ public:
             strcpy(data_, address.c_str());
             length = address.length();
         }
-        
+        Log(INFO) << "UDPSocket Send data: " << std::string(data_);
         socket_.async_send_to(
                               asio::buffer(data_, length), sender_endpoint_,
                               [this](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
