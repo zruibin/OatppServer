@@ -47,7 +47,8 @@ public:
         
         if (strncmp(data_, "ip", 2) == 0) {
             std::string address = sender_endpoint_.address().to_string();
-            Log(INFO) << "Remote Address: " << address;
+            Log(INFO) << "Remote Address: " << address
+                        << ", Port: " << sender_endpoint_.port();
             strcpy(data_, address.c_str());
             length = address.length();
         }
@@ -95,6 +96,8 @@ void runAsynUDPSocket(short port)
 
 /*
  测试命令： nc -u  127.0.0.1 5566
+ 
+ 查询指定端口号进程信息: lsof -i:端口号
  
  python测试脚本：
 
